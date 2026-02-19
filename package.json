@@ -6,8 +6,7 @@
   "icon": "extension-icon.png",
   "author": "farizio_kautsar",
   "platforms": [
-    "macOS",
-    "Windows"
+    "macOS"
   ],
   "categories": [
     "Productivity",
@@ -17,22 +16,19 @@
   "commands": [
     {
       "name": "switch-to-dp",
-      "title": "Switch Monitor to DP",
-      "subtitle": "KVM Switch to DisplayPort",
+      "title": "Switch Monitor to DisplayPort",
       "description": "Switching monitor to input to DisplayPort",
       "mode": "no-view"
     },
     {
       "name": "switch-to-hdmi",
       "title": "Switch Monitor to HDMI",
-      "subtitle": "KVM Switch to HDMI",
       "description": "Switching monitor to input to HDMI",
       "mode": "no-view"
     },
     {
       "name": "switch-to-type-c",
       "title": "Switch Monitor to Type-C",
-      "subtitle": "KVM Switch to Type-C",
       "description": "Switching monitor to input to Type-C",
       "mode": "no-view"
     },
