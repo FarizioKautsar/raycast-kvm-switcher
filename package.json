@@ -17,23 +17,23 @@
   "commands": [
     {
       "name": "switch-to-dp",
-      "title": "Switch to DP",
+      "title": "Switch Monitor to DP",
       "subtitle": "KVM Switch to DisplayPort",
-      "description": "Switching monitor to input from DisplayPort",
+      "description": "Switching monitor to input to DisplayPort",
       "mode": "no-view"
     },
     {
       "name": "switch-to-hdmi",
-      "title": "Switch to HDMI",
+      "title": "Switch Monitor to HDMI",
       "subtitle": "KVM Switch to HDMI",
-      "description": "Switching monitor to input from HDMI",
+      "description": "Switching monitor to input to HDMI",
       "mode": "no-view"
     },
     {
       "name": "switch-to-type-c",
-      "title": "Switch to Type-C",
+      "title": "Switch Monitor to Type-C",
       "subtitle": "KVM Switch to Type-C",
-      "description": "Switching monitor to input from Type-C",
+      "description": "Switching monitor to input to Type-C",
       "mode": "no-view"
     },
     {
