@@ -18,13 +18,17 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
       const csCode = fs.readFileSync(csFilePath, "utf8");
 
       const psCommand = `
-      Add-Type -TypeDefinition @'
-      ${csCode}
+Add-Type -TypeDefinition @'
+${csCode}
 '@
-      [MonitorControl]::SetInput(${inputCode})
-    `;
+[MonitorControl]::SetInput(${inputCode})
+`;
 
-      await execAsync(`powershell -NoProfile -ExecutionPolicy Bypass -Command "${psCommand.replace(/"/g, '\\"')}"`);
+      const psPath = process.env.SystemRoot
+        ? `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`
+        : "powershell.exe";
+
+      await execAsync(psCommand, { shell: psPath });
     } else {
       await execAsync(switchCommand);
     }
