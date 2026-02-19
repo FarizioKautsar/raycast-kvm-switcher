@@ -7,6 +7,6 @@ interface Preferences {
 
 export default async function main() {
   const { customCode } = getPreferenceValues<Preferences>();
-  
+
   await switchMonitorInput(customCode, `Custom (${customCode})`);
 }
