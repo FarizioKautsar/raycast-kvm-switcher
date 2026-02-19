@@ -1,6 +1,9 @@
 import { showHUD, showToast, Toast, Clipboard, open } from "@raycast/api";
 import { exec } from "child_process";
 import { promisify } from "util";
+import fs from "fs";
+import path from "path";
+import { environment } from "@raycast/api";
 
 const execAsync = promisify(exec);
 
@@ -10,7 +13,21 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
   const switchCommand = `${envPath} && m1ddc set input ${inputCode}`;
 
   try {
-    await execAsync(switchCommand);
+    if (process.platform === "win32") {
+      const csFilePath = path.join(environment.assetsPath, "MonitorSwitcher.cs");
+      const csCode = fs.readFileSync(csFilePath, "utf8");
+
+      const psCommand = `
+      Add-Type -TypeDefinition @'
+      ${csCode}
+'@
+      [MonitorControl]::SetInput(${inputCode})
+    `;
+
+      await execAsync(`powershell -NoProfile -ExecutionPolicy Bypass -Command "${psCommand.replace(/"/g, '\\"')}"`);
+    } else {
+      await execAsync(switchCommand);
+    }
     await showHUD(`🖥️ Switched to ${inputName}`);
   } catch (error) {
     if ((error as Error).message.includes("command not found")) {
