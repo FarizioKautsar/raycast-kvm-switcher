@@ -17,21 +17,21 @@ The extension relies on a lightweight tool called `m1ddc`.
 
 ---
 
-## Supported Input Codes (Cheat Sheet)
-
 Finding the exact code for your monitor's input ports requires a little trial and error, as manufacturers often assign them differently. Below are the most common industry-standard DDC/CI Virtual Control Panel (VCP) codes:
 
-| Input Type | Common VCP Codes |
-| :--- | :--- |
-| **DisplayPort 1** | `15` |
-| **DisplayPort 2** | `16` |
-| **HDMI 1** | `17` |
-| **HDMI 2** | `18` |
-| **USB-C / Type-C** | `18`, `27`, or `15`* |
+| Input Type | VCP Code (Decimal) | VCP Code (Hex) | VESA Standard Name |
+| :--- | :--- | :--- | :--- |
+| **VGA 1** | `1` | `0x01` | VGA-1 |
+| **DVI 1** | `3` | `0x03` | DVI-1 |
+| **DisplayPort 1** | `15` | `0x0F` | DisplayPort-1 |
+| **DisplayPort 2** | `16` | `0x10` | DisplayPort-2 |
+| **HDMI 1** | `17` | `0x11` | HDMI-1 |
+| **HDMI 2** | `18` | `0x12` | HDMI-2 |
 
-**Note for USB-C Users:** Many monitors (like the MSI Modern series) treat the USB-C port as a DisplayPort internally. If your USB-C isn't responding to code `18`, try code `15`.
+Modern monitors often map "Newer" ports (like USB-C) to "Older" VESA standard addresses because the VESA MCCS spec was finalized before USB-C became a standard video connection.
 
----
+* **Example:** For many **MSI Modern Series** monitors, the **USB-C (DisplayPort Alt Mode)** input is internally mapped to **HDMI 2 (Code 18)**.
+* If your USB-C port is not responding to code `18`, it is likely mapped to `15` (DisplayPort 1) or `27` (0x1B).
 
 ## ⚠️ Hardware Compatibility & Limitations
 
@@ -60,3 +60,8 @@ To ensure a seamless cross-platform experience without bundling suspicious binar
 
 - **macOS:** Uses `child_process` to execute `m1ddc` via shell. Includes an auto-dependency checker for Homebrew.
 - **Windows:** Reads a local `MonitorSwitcher.cs` asset and executes it via PowerShell's `Add-Type` functionality. This compiles the C# code in memory at runtime to call `SetVCPFeature` from `dxva2.dll`. This approach avoids the need for external `.exe` files.
+
+## 📚 Technical References
+
+- **VESA MCCS Standard:** [Input Source Selection (VCP 60)](https://www.ddcutil.com/vcpinfo_output/#vcp-code-60-input-source-selects-active-video-source) — Detailed breakdown of how different MCCS versions (2.0, 2.1, 2.2, 3.0) handle input values.
+- **Win32 API:** [SetVCPFeature Function](https://learn.microsoft.com/en-us/windows/win32/api/lowlevelmonitorconfigurationapi/nf-lowlevelmonitorconfigurationapi-setvcpfeature) — Official Microsoft documentation for the hardware-level function used in the Windows implementation.
