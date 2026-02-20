@@ -1,12 +1,8 @@
 import { getPreferenceValues } from "@raycast/api";
 import { switchMonitorInput } from "./switch-util";
 
-interface Preferences {
-  customCode: string;
-}
-
 export default async function main() {
-  const { customCode } = getPreferenceValues<Preferences>();
+  const { customCode } = getPreferenceValues<Preferences.SwitchToCustom>();
 
   await switchMonitorInput(customCode, `Custom (${customCode})`);
 }
