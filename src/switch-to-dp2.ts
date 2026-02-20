@@ -1,5 +1,5 @@
 import { switchMonitorInput } from "./switch-util";
 
 export default async function main() {
-  await switchMonitorInput(18, "DisplayPort");
+  await switchMonitorInput(16, "DisplayPort 2");
 }

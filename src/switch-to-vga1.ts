@@ -1,5 +1,5 @@
 import { switchMonitorInput } from "./switch-util";
 
 export default async function main() {
-  await switchMonitorInput(17, "HDMI");
+  await switchMonitorInput(1, "VGA 1");
 }
