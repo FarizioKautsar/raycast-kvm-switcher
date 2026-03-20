@@ -1,7 +1,6 @@
 import { showHUD, showToast, Toast, Clipboard, open } from "@raycast/api";
 import { exec } from "child_process";
 import { promisify } from "util";
-import fs from "fs";
 import path from "path";
 import { environment } from "@raycast/api";
 
@@ -35,7 +34,6 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
         : "powershell.exe";
 
       await execAsync(`"${psPath}" -NoProfile -NonInteractive -Command "${psCommand}"`);
-      
     } else {
       await execAsync(switchCommand);
     }
@@ -50,7 +48,7 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
 
       try {
         await execAsync(`${envPath} && which brew`);
-      } catch (_err) {
+      } catch {
         toast.style = Toast.Style.Failure;
         toast.title = "Homebrew is Missing";
         toast.message = "You need Homebrew to install m1ddc.";
@@ -61,7 +59,7 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
             Clipboard.copy(
               '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
             );
-            toast.hide(); 
+            toast.hide();
             showHUD("Copied Homebrew command to clipboard.");
           },
         };
