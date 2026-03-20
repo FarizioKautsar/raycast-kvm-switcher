@@ -8,6 +8,7 @@ import { environment } from "@raycast/api";
 const execAsync = promisify(exec);
 
 const envPath = 'export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"';
+const brewEnv = `export HOMEBREW_NO_AUTO_UPDATE=1 && ${envPath}`;
 
 export async function switchMonitorInput(inputCode: string | number, inputName: string) {
   // Input code has to be numeric or hex
@@ -26,20 +27,15 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
   try {
     if (process.platform === "win32") {
       const csFilePath = path.join(environment.assetsPath, "MonitorSwitcher.cs");
-      const csCode = fs.readFileSync(csFilePath, "utf8");
 
-      const psCommand = `
-Add-Type -TypeDefinition @'
-${csCode}
-'@
-[MonitorControl]::SetInput(${sanitizedCode})
-`;
+      const psCommand = `Add-Type -Path '${csFilePath}'; [MonitorControl]::SetInput(${sanitizedCode})`;
 
       const psPath = process.env.SystemRoot
         ? `${process.env.SystemRoot}\\System32\\WindowsPowerShell\\v1.0\\powershell.exe`
         : "powershell.exe";
 
-      await execAsync(psCommand, { shell: psPath });
+      await execAsync(`"${psPath}" -NoProfile -NonInteractive -Command "${psCommand}"`);
+      
     } else {
       await execAsync(switchCommand);
     }
@@ -54,21 +50,19 @@ ${csCode}
 
       try {
         await execAsync(`${envPath} && which brew`);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (_err) {
-        // HOMEBREW IS MISSING: Handle gracefully
         toast.style = Toast.Style.Failure;
         toast.title = "Homebrew is Missing";
         toast.message = "You need Homebrew to install m1ddc.";
 
         toast.primaryAction = {
           title: "Copy Brew Install Command",
-          onAction: (toastToHide) => {
+          onAction: () => {
             Clipboard.copy(
               '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
             );
-            toastToHide.hide();
-            showHUD("Copied Homebrew command to clipboard. Please run it in your terminal.");
+            toast.hide(); 
+            showHUD("Copied Homebrew command to clipboard.");
           },
         };
 
@@ -76,7 +70,6 @@ ${csCode}
           title: "Open brew.sh",
           onAction: () => open("https://brew.sh"),
         };
-
         return;
       }
 
@@ -84,7 +77,7 @@ ${csCode}
       toast.message = "Fetching from Homebrew. This might take a moment.";
 
       try {
-        await execAsync(`${envPath} && brew install m1ddc`);
+        await execAsync(`${brewEnv} && brew install m1ddc`);
 
         toast.style = Toast.Style.Success;
         toast.title = "Installation Complete";
@@ -99,9 +92,9 @@ ${csCode}
 
         toast.primaryAction = {
           title: "Copy Error Log",
-          onAction: (toastToHide) => {
+          onAction: () => {
             Clipboard.copy(String(installError));
-            toastToHide.hide();
+            toast.hide();
             showHUD("Error log copied to clipboard");
           },
         };
@@ -115,9 +108,9 @@ ${csCode}
 
       errorToast.primaryAction = {
         title: "Copy Error Log",
-        onAction: (toastToHide) => {
+        onAction: () => {
           Clipboard.copy(String(error));
-          toastToHide.hide();
+          errorToast.hide();
           showHUD("Error log copied to clipboard");
         },
       };
