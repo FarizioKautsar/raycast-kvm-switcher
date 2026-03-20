@@ -8,12 +8,14 @@ public class MonitorControl {
     [StructLayout(LayoutKind.Sequential)] public struct Rect { public int Left, Top, Right, Bottom; }
     [DllImport("dxva2.dll")] public static extern bool GetPhysicalMonitorsFromHMONITOR(IntPtr hMonitor, uint dwPhysicalMonitorArraySize, [Out] PHYSICAL_MONITOR[] pPhysicalMonitorArray);
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] public struct PHYSICAL_MONITOR { public IntPtr hPhysicalMonitor; [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string szPhysicalMonitorDescription; }
+    [DllImport("dxva2.dll")] public static extern bool DestroyPhysicalMonitor(IntPtr hMonitor);
 
     public static void SetInput(uint inputCode) {
         EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData) {
             PHYSICAL_MONITOR[] pms = new PHYSICAL_MONITOR[1];
             if (GetPhysicalMonitorsFromHMONITOR(hMonitor, 1, pms)) {
                 SetVCPFeature(pms[0].hPhysicalMonitor, 0x60, inputCode);
+                DestroyPhysicalMonitor(pms[0].hPhysicalMonitor);
             }
             return true;
         }, IntPtr.Zero);
