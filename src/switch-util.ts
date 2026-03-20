@@ -10,7 +10,18 @@ const execAsync = promisify(exec);
 const envPath = 'export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"';
 
 export async function switchMonitorInput(inputCode: string | number, inputName: string) {
-  const switchCommand = `${envPath} && m1ddc set input ${inputCode}`;
+  // Input code has to be numeric or hex
+  const sanitizedCode = String(inputCode).trim();
+  if (!/^(0x)?[0-9a-fA-F]+$/.test(sanitizedCode)) {
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "Invalid Input Code",
+      message: "Input code must be a valid numeric or hex value.",
+    });
+    return;
+  }
+
+  const switchCommand = `${envPath} && m1ddc set input ${sanitizedCode}`;
 
   try {
     if (process.platform === "win32") {
@@ -21,7 +32,7 @@ export async function switchMonitorInput(inputCode: string | number, inputName: 
 Add-Type -TypeDefinition @'
 ${csCode}
 '@
-[MonitorControl]::SetInput(${inputCode})
+[MonitorControl]::SetInput(${sanitizedCode})
 `;
 
       const psPath = process.env.SystemRoot
